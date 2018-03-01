@@ -17,3 +17,6 @@
 .*.swo
 *~
 
+.vagrant/
+Vagrantfile
+
