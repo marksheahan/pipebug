@@ -3,20 +3,21 @@ package main
 import (
 	"bytes"
 	"io"
+	"os"
 	"sync"
 	"testing"
 )
 
 func TestRunCommandStringPipes(t *testing.T) {
 
-	stdin, stdout, stderr, finished, err := runCommandStringPipes("cat ; echo tostderr >&2")
+	stdin, stdout, stderr, finished, err := runCommandStringPipes("cat ; echo tostderr >&2", t)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Logf("stdout %T %v %#v stderr %T %v %#v", stdout, stdout, stdout, stderr, stderr, stderr)
+	t.Logf("stdout %T %v %v stderr %T %v %v", stdout, stdout, stdout.(*os.File).Fd(), stderr, stderr, stderr.(*os.File).Fd())
 
-	stdoutExpected := "hello world"
+	stdoutExpected := "hello world\n"
 	stdinBuf := bytes.NewBufferString(stdoutExpected)
 	stderrExpected := "tostderr\n"
 	stdoutBuf := &bytes.Buffer{}

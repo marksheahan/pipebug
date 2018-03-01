@@ -2,10 +2,15 @@ package main
 
 import (
 	"io"
+	"os"
 	"os/exec"
 )
 
-func runCommandStringPipes(cmd string) (io.WriteCloser, io.Reader, io.Reader, chan error, error) {
+type Logger interface {
+	Logf(string, ...interface{})
+}
+
+func runCommandStringPipes(cmd string, t Logger) (io.WriteCloser, io.Reader, io.Reader, chan error, error) {
 	sess := exec.Command("/bin/sh", "-c", cmd)
 
 	stdin_pipe, err := sess.StdinPipe()
@@ -20,6 +25,13 @@ func runCommandStringPipes(cmd string) (io.WriteCloser, io.Reader, io.Reader, ch
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
+
+	t.Logf("file descriptors: stdout %v %v stderr %v %v",
+		stdout_pipe.(*os.File).Fd(),
+		sess.Stdout.(*os.File).Fd(),
+		stderr_pipe.(*os.File).Fd(),
+		sess.Stderr.(*os.File).Fd(),
+	)
 
 	err = sess.Start()
 	if err != nil {
