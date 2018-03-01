@@ -58,14 +58,13 @@ func TestRunCommandStringPipes(t *testing.T) {
 	wg.Wait()
 	close(errors)
 
-	for err := range errors {
-		t.Fatal(err)
-	}
-
 	if stdoutBuf.String() != stdoutExpected {
 		t.Fatalf("stdout data died %v vs %v", stdoutBuf.String(), stdoutExpected)
 	}
 	if stderrBuf.String() != stderrExpected {
 		t.Fatalf("stderr data died %v vs %v", stderrBuf.String(), stderrExpected)
+	}
+	for err := range errors {
+		t.Error(err)
 	}
 }

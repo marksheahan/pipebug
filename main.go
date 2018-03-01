@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-func newPipesSession(cmd string) (*exec.Cmd, io.WriteCloser, io.Reader, io.Reader, error) {
+func runCommandStringPipes(cmd string) (io.WriteCloser, io.Reader, io.Reader, chan error, error) {
 	sess := exec.Command("/bin/sh", "-c", cmd)
 
 	stdin_pipe, err := sess.StdinPipe()
@@ -21,15 +21,7 @@ func newPipesSession(cmd string) (*exec.Cmd, io.WriteCloser, io.Reader, io.Reade
 		return nil, nil, nil, nil, err
 	}
 
-	return sess, stdin_pipe, stdout_pipe, stderr_pipe, nil
-}
-
-func runCommandStringPipes(cmd string) (io.WriteCloser, io.Reader, io.Reader, chan error, error) {
-	c, stdin, stdout, stderr, err := newPipesSession(cmd)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-	err = c.Start()
+	err = sess.Start()
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -37,7 +29,7 @@ func runCommandStringPipes(cmd string) (io.WriteCloser, io.Reader, io.Reader, ch
 	finished := make(chan error)
 	go func() {
 		defer close(finished)
-		finished <- c.Wait()
+		finished <- sess.Wait()
 	}()
-	return stdin, stdout, stderr, finished, nil
+	return stdin_pipe, stdout_pipe, stderr_pipe, finished, nil
 }
