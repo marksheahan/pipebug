@@ -1,16 +1,19 @@
 # pipebug
 possible golang bug / api race condition
 
-Can reproduce on Linux with kernels:
-
 Cannot reproduce on Darwin:
-Darwin eng-mark-sheahan 17.4.0 Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64 x86_64
+```
+Darwin mark-sheahan 17.4.0 Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64 x86_64
+```
 
 Can reproduce on Linux with several go releases (1.8.3, 1.10), and several Linux kernels:
+```
 Linux centos-vm 3.10.0-514.26.2.el7.x86_64 #1 SMP Tue Jul 4 15:04:05 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
 Linux ubuntu-vm 3.13.0-133-generic #182-Ubuntu SMP Tue Sep 19 15:49:21 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
 Linux vagrant 4.13.0-19-generic #22-Ubuntu SMP Mon Dec 4 11:58:07 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+```
 
+Just checkout and type `make` a few times to reproduce:
 ```bash
 vagrant@vagrant:~/go/src/github.com/marksheahan/pipebug$ make
 go test -count 100
